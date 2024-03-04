@@ -32,50 +32,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/loginPage").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginProcessingUrl("/login_proc")
-                .defaultSuccessUrl("/")
-                .failureUrl("/login?error=true")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .successHandler(new AuthenticationSuccessHandler() {
-                    @Override
-                    public void onAuthenticationSuccess(HttpServletRequest request,
-                                                        HttpServletResponse response,
-                                                        Authentication authentication) throws IOException {
-                        System.out.println("success");
-                        response.sendRedirect("/");
-                    }
-                })
-                .failureHandler(new AuthenticationFailureHandler() {
-                    @Override
-                    public void onAuthenticationFailure(HttpServletRequest request,
-                                                        HttpServletResponse response,
-                                                        AuthenticationException e) throws IOException {
-                        System.out.println("failure");
-                        response.sendRedirect("/login");
-                    }
-                })
-                .and()
-                .logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login")
-                .logoutSuccessHandler(new LogoutSuccessHandler() {
-                    @Override
-                    public void onLogoutSuccess(HttpServletRequest request,
-                                                HttpServletResponse response,
-                                                Authentication authentication) throws IOException {
-                        System.out.println("logout");
-                        response.sendRedirect("/login");
-                    }
-                })
-                .and()
+                .anyRequest().authenticated();
+        http
+                .formLogin();
+        http
                 .rememberMe()
-                .rememberMeParameter("remember")
-                .tokenValiditySeconds(3600)
                 .userDetailsService(userDetailsService)
         ;
     }
