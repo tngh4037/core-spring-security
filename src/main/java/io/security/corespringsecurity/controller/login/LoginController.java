@@ -1,6 +1,7 @@
 package io.security.corespringsecurity.controller.login;
 
-import io.security.corespringsecurity.domain.Account;
+import io.security.corespringsecurity.domain.entity.Account;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
 
 @Controller
 public class LoginController {
@@ -40,12 +42,14 @@ public class LoginController {
 
     @GetMapping("/denied")
     public String accessDenied(@RequestParam(value ="exception", required = false) String exception,
+                               Principal principal,
                                Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Account account = (Account) authentication.getPrincipal();
 
-        model.addAttribute("username", account.getUsername());
-        model.addAttribute("exception", exception);
+        if (principal instanceof UsernamePasswordAuthenticationToken) {
+            Account account = (Account) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+            model.addAttribute("username", account.getUsername());
+            model.addAttribute("exception", exception);
+        }
 
         return "user/login/denied";
     }
