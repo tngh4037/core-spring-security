@@ -30,15 +30,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private FormAuthenticationDetailsSource formWebAuthenticationDetailsSource;
 
     @Autowired
-    private AuthenticationSuccessHandler formCustomAuthenticationSuccessHandler;
+    private AuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
     @Autowired
-    private AuthenticationFailureHandler formCustomAuthenticationFailureHandler;
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        return new CustomAuthenticationProvider();
-    }
+    private AuthenticationFailureHandler customAuthenticationFailureHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -50,6 +45,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CustomAccessDeniedHandler accessDeniedHandler = new CustomAccessDeniedHandler();
         accessDeniedHandler.setErrorPage("/denied");
         return accessDeniedHandler;
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        return new CustomAuthenticationProvider();
     }
 
     @Override
@@ -76,8 +76,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login")
                 .loginProcessingUrl("/login_proc")
                 .authenticationDetailsSource(formWebAuthenticationDetailsSource)
-                .successHandler(formCustomAuthenticationSuccessHandler)
-                .failureHandler(formCustomAuthenticationFailureHandler)
+                .successHandler(customAuthenticationSuccessHandler)
+                .failureHandler(customAuthenticationFailureHandler)
                 .permitAll()
         .and()
                 .exceptionHandling()
