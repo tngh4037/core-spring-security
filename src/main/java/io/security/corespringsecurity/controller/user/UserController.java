@@ -2,6 +2,7 @@ package io.security.corespringsecurity.controller.user;
 
 import io.security.corespringsecurity.domain.dto.AccountDto;
 import io.security.corespringsecurity.domain.entity.Account;
+import io.security.corespringsecurity.security.token.AjaxAuthenticationToken;
 import io.security.corespringsecurity.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -39,22 +40,30 @@ public class UserController {
 		return "redirect:/";
 	}
 
-	@GetMapping(value = "/mypage")
-	public String myPage(@AuthenticationPrincipal Account account, Authentication authentication, Principal principal) {
-		String username = account.getUsername();
-		System.out.println("username = " + username);
+	@GetMapping(value="/mypage")
+	public String myPage(@AuthenticationPrincipal Account account, Authentication authentication, Principal principal) throws Exception {
 
-		account = (Account) authentication.getPrincipal();
-		username = account.getUsername();
-		System.out.println("username = " + username);
+		String username1 = account.getUsername();
+		System.out.println("username1 = " + username1);
 
-		account = (Account)((UsernamePasswordAuthenticationToken)principal).getPrincipal();
-		username = account.getUsername();
-		System.out.println("username = " + username);
+		Account account2 = (Account) authentication.getPrincipal();
+		String username2 = account2.getUsername();
+		System.out.println("username2 = " + username2);
 
-		account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		username = account.getUsername();
-		System.out.println("username = " + username);
+		Account account3 = null;
+		if (principal instanceof UsernamePasswordAuthenticationToken) {
+			account3 = (Account) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+
+		} else if(principal instanceof AjaxAuthenticationToken) {
+			account3 = (Account) ((AjaxAuthenticationToken) principal).getPrincipal();
+		}
+
+		String username3 = account3.getUsername();
+		System.out.println("username3 = " + username3);
+
+		Account account4 = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String username4 = account4.getUsername();
+		System.out.println("username4 = " + username4);
 
 		return "user/mypage";
 	}

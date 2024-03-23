@@ -19,7 +19,7 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public AjaxLoginProcessingFilter() {
-        super(new AntPathRequestMatcher("/api/login")); // 사용자가 해당 경로로 요청했을 때 필터가 동작한다. 해당 경로로 요청하지 않았다면 이 필터에서 요청을 처리하지 않는다.
+        super(new AntPathRequestMatcher("/api/login", "POST")); // 사용자가 해당 경로로 요청했을 때 필터가 동작한다. 해당 경로로 요청하지 않았다면 이 필터에서 요청을 처리하지 않는다.
     }
 
     @Override
