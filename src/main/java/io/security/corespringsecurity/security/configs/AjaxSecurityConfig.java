@@ -44,14 +44,14 @@ public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter {
         return new AjaxAuthenticationFailureHandler();
     }
 
-    @Bean
-    public AjaxLoginProcessingFilter ajaxLoginProcessingFilter() throws Exception {
-        AjaxLoginProcessingFilter ajaxLoginProcessingFilter = new AjaxLoginProcessingFilter();
-        ajaxLoginProcessingFilter.setAuthenticationManager(authenticationManagerBean());
-        ajaxLoginProcessingFilter.setAuthenticationSuccessHandler(ajaxAuthenticationSuccessHandler());
-        ajaxLoginProcessingFilter.setAuthenticationFailureHandler(ajaxAuthenticationFailureHandler());
-        return ajaxLoginProcessingFilter;
-    }
+   //  @Bean
+   //  public AjaxLoginProcessingFilter ajaxLoginProcessingFilter() throws Exception {
+   //      AjaxLoginProcessingFilter ajaxLoginProcessingFilter = new AjaxLoginProcessingFilter();
+   //      ajaxLoginProcessingFilter.setAuthenticationManager(authenticationManagerBean());
+   //      ajaxLoginProcessingFilter.setAuthenticationSuccessHandler(ajaxAuthenticationSuccessHandler());
+   //      ajaxLoginProcessingFilter.setAuthenticationFailureHandler(ajaxAuthenticationFailureHandler());
+   //      return ajaxLoginProcessingFilter;
+   //  }
 
     @Bean
     public AccessDeniedHandler ajaxAccessDeniedHandler() {
@@ -64,10 +64,10 @@ public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatcher("/api/**")
                 .authorizeRequests()
                 .antMatchers("/api/messages").hasRole("MANAGER")
-                .anyRequest().authenticated()
+                .anyRequest().authenticated();
 
-        .and()
-                .addFilterBefore(ajaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+  //     .and()
+  //             .addFilterBefore(ajaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .exceptionHandling()
@@ -75,5 +75,17 @@ public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(ajaxAccessDeniedHandler());
 
         http.csrf().disable();
+
+        customConfigurerAjax(http);
+    }
+
+    private void customConfigurerAjax(HttpSecurity http) throws Exception {
+        http
+                .apply(new AjaxLoginConfigurer<>())
+                .successHandlerAjax(ajaxAuthenticationSuccessHandler())
+                .failureHandlerAjax(ajaxAuthenticationFailureHandler())
+                .setAuthenticationManager(authenticationManagerBean())
+                .loginProcessingUrl("/api/login")
+        ;
     }
 }
